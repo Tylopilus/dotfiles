@@ -8,11 +8,14 @@ alias la='ls -1ahG'
 alias ll='ls -lahG'
 alias openai='export OPENAI_API_KEY=$(security find-generic-password -a "$USER" -s 'OPEN_API_KEY' -w)'
 alias nvm='fnm'
-alias j21='export JAVA_HOME=/usr/local/opt/openjdk@21 ; echo java -version'
+alias j22='export JAVA_HOME=/usr/local/opt/openjdk@22 ; echo java -version'
+alias j11='export JAVA_HOME=/usr/local/opt/openjdk@11 ; echo java -version'
+alias vim='export JAVA_HOME=/user/local/opt/openjdk@22;nvim'
 
 # Exports
 export PATH="/usr/local/bin:/usr/local/sbin:$HOME/.deno/bin:$PATH"
-export JAVA_HOME="/Library/Java/JavaVirtualMachines/openjdk-11.jdk/Contents/Home"
+export JAVA_HOME="/usr/local/opt/openjdk@22"
+#export JAVA_HOME="/Library/Java/JavaVirtualMachines/openjdk-11.jdk/Contents/Home"
 
 # Functions
 function mkcd() {
@@ -32,6 +35,16 @@ function cx() {
   cd $1 && la
 }
 
+# start yazi and cd into the directory after exit
+function yy() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+	yazi "$@" --cwd-file="$tmp"
+	if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+		builtin cd -- "$cwd"
+	fi
+	rm -f -- "$tmp"
+}
+
 _direnv_hook() {
   trap -- '' SIGINT
   eval "$("/opt/homebrew/bin/direnv" export zsh)"
@@ -49,3 +62,4 @@ fi
 
 eval "$(direnv hook zsh)"
 eval "$(fnm env --use-on-cd)"
+eval "$(zoxide init zsh --cmd cd)"

@@ -1,0 +1,5 @@
+[manager]
+prepend_keymap = [
+  { on = "<Enter>", run = 'enter', desc = "Navigate directory in" },
+  { on = "<Backspace>", run = 'leave', desc = 'Navigate directory out' },
+]
